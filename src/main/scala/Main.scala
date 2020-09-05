@@ -11,7 +11,8 @@ object Main extends App {
   //example service calls
 
   //fetch reference rate data for a given Date for all available Currencies
-  val date = "2018-01-02"
+  val date =
+    "2018-01-02" // I assume that given date exists in CSV file, same for start and end dates below
   val rates = service.ratesForDate(date)
   println(s"Rates for $date are: $rates")
 

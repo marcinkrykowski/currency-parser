@@ -9,7 +9,6 @@ case class CurrencyService(currencyRepository: CurrencyRepository) {
       finish: String,
       currency: String
   ): List[String] = {
-    //TODO what if start date or finish date does not exist
     val afterStart =
       currencyRepository.records
         .sortBy(_.date)
@@ -21,17 +20,32 @@ case class CurrencyService(currencyRepository: CurrencyRepository) {
         .reverse
         .dropWhile(rec => rec.date != finish)
 
-    //TODO what if currency does not exist
     val res =
       afterStart
         .intersect(beforeEnd)
         .map(rec => rec.rates(currency))
+//        .map(rec => rec.rates.getOrElse(currency, "No such currency"))
     res
   }
-  def averageRate(start: String, finish: String, currency: String): Any = {
+  def averageRate(
+      start: String,
+      finish: String,
+      currency: String
+  ): BigDecimal = {
     val odp =
       ratesWithinDates(start, finish, currency).map(x => BigDecimal(x.toDouble))
     odp.sum / odp.length
+
+//    val rates = ratesWithinDates(start, finish, currency)
+//    val rate = rates.map(x => toDouble(x).getOrElse())
+  }
+
+  def toDouble(s: String): Option[Double] = {
+    try {
+      Some(s.toDouble)
+    } catch {
+      case e: NumberFormatException => None
+    }
   }
 
   def highestRate(

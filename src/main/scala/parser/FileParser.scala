@@ -6,63 +6,25 @@ import scala.io.Source
 
 object FileParser {
 
-  // TODO extract currency names based on file
-  val currenciesNames = List(
-    "USD",
-    "JPY",
-    "BGN",
-    "CYP",
-    "CZK",
-    "DKK",
-    "EEK",
-    "GBP",
-    "HUF",
-    "LTL",
-    "LVL",
-    "MTL",
-    "PLN",
-    "ROL",
-    "RON",
-    "SEK",
-    "SIT",
-    "SKK",
-    "CHF",
-    "ISK",
-    "NOK",
-    "HRK",
-    "RUB",
-    "TRL",
-    "TRY",
-    "AUD",
-    "BRL",
-    "CAD",
-    "CNY",
-    "HKD",
-    "IDR",
-    "ILS",
-    "INR",
-    "KRW",
-    "MXN",
-    "MYR",
-    "NZD",
-    "PHP",
-    "SGD",
-    "THB",
-    "ZAR"
-  )
-
   def parseCurrencyRecords(fileName: String): List[CurrencyRecord] = {
-    parseCurrency(parseFile(fileName))
+    val records = parseFile(fileName)
+    val names = parseFirstRow(records.head)
+    parseCurrency(records.tail, names)
   }
 
   def parseFile(fileName: String): List[String] = {
     val source = Source.fromFile(fileName)
     val lines = source.getLines.filter(_.length > 0).toList
     source.close()
-    lines.tail
+    lines
   }
 
-  def parseCurrency(currencyString: List[String]): List[CurrencyRecord] = {
+  def parseFirstRow(names: String): List[String] = names.split(",").toList.tail
+
+  def parseCurrency(
+      currencyString: List[String],
+      currenciesNames: List[String]
+  ): List[CurrencyRecord] = {
     currencyString.map { record =>
       val params = record.split(",")
       val date = params.head
