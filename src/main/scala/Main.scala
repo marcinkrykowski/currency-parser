@@ -4,6 +4,7 @@ import service.CurrencyService
 
 //in some case logic from Main class might be moved to controller, depending if needed
 object Main extends App {
+  //in that case data is taken directly from local file, but if needed might also be fetched from URL
   val sourceFile: String = "./src/main/resources/eurofxref-hist.csv"
   val records = FileParser.parseCurrencyRecords(sourceFile)
   val service = CurrencyService(CurrencyRepository(records))

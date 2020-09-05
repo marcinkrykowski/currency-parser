@@ -35,9 +35,6 @@ case class CurrencyService(currencyRepository: CurrencyRepository) {
     val odp =
       ratesWithinDates(start, finish, currency).map(x => BigDecimal(x.toDouble))
     odp.sum / odp.length
-
-//    val rates = ratesWithinDates(start, finish, currency)
-//    val rate = rates.map(x => toDouble(x).getOrElse())
   }
 
   def toDouble(s: String): Option[Double] = {
