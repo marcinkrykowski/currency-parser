@@ -57,8 +57,7 @@ case class CurrencyService(currencyRepository: CurrencyRepository) {
       ratesForGivenDate(targetCurrency).toDouble
     )
     //TODO what if there will be no rate eg "N/A"
-    val l: BigDecimal = amount * rateForSourceCurrency / rateForTargetCurrency
-    val res: BigDecimal = l / rateForTargetCurrency
+    val res: BigDecimal = amount * rateForSourceCurrency / rateForTargetCurrency
     res.setScale(2, BigDecimal.RoundingMode.HALF_UP)
   }
 
