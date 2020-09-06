@@ -48,7 +48,7 @@ class CurrencyServiceSpec extends AnyFlatSpec with Matchers {
     ) shouldBe "Data not available"
   }
 
-  it should "return average rate for one not available rate" in {
+  it should "calculate average rate for one missing rate" in {
     service.averageRate(
       "2020-08-26",
       "2020-08-28",
@@ -56,7 +56,7 @@ class CurrencyServiceSpec extends AnyFlatSpec with Matchers {
     ) shouldBe 1.9558
   }
 
-  it should "return \"Data not available\" for not existing currency in average rate" in {
+  it should "return \"Data not available\" for not existing currency" in {
     service.averageRate(
       "2020-08-25",
       "2020-08-27",
@@ -70,12 +70,18 @@ class CurrencyServiceSpec extends AnyFlatSpec with Matchers {
       .toDouble shouldBe 1.9999
   }
 
-  it should "return highest rate for not available rate" in {
+  it should "return \"N/A\" for not available rates" in {
     service
       .highestRate("2020-08-26", "2020-08-28", "CYP") shouldBe "N/A"
   }
 
-  it should "return highest rate for not existing currency" in {
+  it should "return correct highest rate for missing rate" in {
+    service
+      .highestRate("2020-08-26", "2020-08-28", "BGN")
+      .toDouble shouldBe 1.9558
+  }
+
+  it should "return \"Currency does not exist\" for not existing currency" in {
     service
       .highestRate(
         "2020-08-26",
@@ -97,7 +103,7 @@ class CurrencyServiceSpec extends AnyFlatSpec with Matchers {
     ) shouldEqual "Data not available"
   }
 
-  it should "return 0 for not existing currency in exchange" in {
+  it should "return 0 for not existing currency" in {
     service.makeExchange(
       "2020-08-27",
       "XXX",
@@ -115,7 +121,6 @@ class CurrencyServiceSpec extends AnyFlatSpec with Matchers {
     ) shouldEqual 0
   }
 
-  //rates within dates
   it should "return rates for given dates" in {
     service.currencyRatesWithinDates(
       "2020-08-26",
@@ -129,7 +134,7 @@ class CurrencyServiceSpec extends AnyFlatSpec with Matchers {
       "2021-08-26",
       "2020-08-27",
       "USD"
-    ) should contain theSameElementsAs List.empty
+    ) should have size 0
   }
 
   it should "return rates only for given date" in {

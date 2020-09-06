@@ -37,7 +37,7 @@ class FileParserSpec extends AnyFlatSpec with Matchers with LoneElement {
     currencyRecords.loneElement shouldEqual singleRecord
   }
 
-  it should "create Currency Records correctly based on given file" in {
+  it should "create Currency Records correctly based on a given file" in {
     val anotherRecord = CurrencyRecord(
       "2020-08-27",
       Map(

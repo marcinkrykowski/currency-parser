@@ -17,7 +17,7 @@ case class CurrencyService(currencyRepository: CurrencyRepository) {
     // below line prevents wrong calculation
     // when for example if some currency misses data from one day
     // we do not want to calculate missing values as 0
-    val length = rates.count(x => x != BigDecimal(0.00))
+    val length = rates.count(rate => rate != BigDecimal(0.00))
 
     rates match {
       case Nil => "Data not available"
@@ -31,7 +31,13 @@ case class CurrencyService(currencyRepository: CurrencyRepository) {
       finish: String,
       currency: String
   ): String = {
-    currencyRatesWithinDates(start, finish, currency).max
+    val rates = currencyRatesWithinDates(start, finish, currency)
+      .filter(rate => !rate.equals("N/A"))
+
+    rates match {
+      case Nil => "N/A"
+      case _   => rates.max
+    }
   }
 
   def makeExchange(
@@ -54,7 +60,7 @@ case class CurrencyService(currencyRepository: CurrencyRepository) {
       List(
         result.setScale(2, BigDecimal.RoundingMode.HALF_UP),
         BigDecimal(0.00)
-      ).max //to prevent negative amount calculation
+      ).max //to prevent calculation for negative amount
     } catch {
       case _: Exception => "Data not available"
     }
@@ -77,17 +83,19 @@ case class CurrencyService(currencyRepository: CurrencyRepository) {
     val afterStart =
       currencyRepository.records
         .sortBy(_.date)
-        .dropWhile(rec => rec.date != start)
+        .dropWhile(record => record.date != start)
 
     val beforeEnd =
       currencyRepository.records
         .sortBy(_.date)
         .reverse
-        .dropWhile(rec => rec.date != finish)
+        .dropWhile(record => record.date != finish)
 
     afterStart
       .intersect(beforeEnd)
-      .map(rec => rec.rates.getOrElse(currency, "Currency does not exist"))
+      .map(record =>
+        record.rates.getOrElse(currency, "Currency does not exist")
+      )
   }
 
   def ratesForDate(date: String): Map[String, String] = {

@@ -14,6 +14,7 @@ object Main extends App {
   //fetch reference rate data for a given Date for all available Currencies
   val date =
     "2018-01-02" // I assume that given date exists in CSV file, same for start and end dates below
+  // otherwise we would get "Data not available" warning
   val rates = service.ratesForDate(date)
   println(s"Rates for $date are: $rates")
 
